@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="DepartmentsManagementSystem.jnlp">
+  <information>
+    <title>DepartmentsManagementSystem</title>
+    <vendor>orcl</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="DepartmentsManagementSystem.jar" size="104176" download="eager" />
+    <jar href="lib\commons-lang-2.6.jar" size="299981" download="eager" />
+    <jar href="lib\commons-logging-1.1.3.jar" size="66670" download="eager" />
+    <jar href="lib\hsqldb-2.3.1.jar" size="1523093" download="eager" />
+    <jar href="lib\jackcess-2.1.3.jar" size="858148" download="eager" />
+    <jar href="lib\jfxmessagebox-1.1.0.jar" size="37622" download="eager" />
+    <jar href="lib\ucanaccess-3.0.3.1.jar" size="346384" download="eager" />
+  </resources>
+<security>
+  <all-permissions/>
+</security>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="DepartmentsManagementSystem" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="departments.management.system.DepartmentsManagementSystem"  name="DepartmentsManagementSystem" />
+  <update check="always"/>
+</jnlp>

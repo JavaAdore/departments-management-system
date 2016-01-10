@@ -1,0 +1,35 @@
+.selected
+{
+    -fx-border-color:red;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-border-padding: .5px;
+
+
+} 
+
+.rightSideMenuButton
+{
+
+    -fx-padding:5px;
+    -fx-width:100px;
+    -fx-height:50px;
+
+}
+
+
+.save
+{
+    -fx-background-image: url('/save.png');
+    -fx-background-size: contain;
+    -fxbackground-repeat: no-repeat;
+
+
+} 
+.edit
+{
+    -fx-background-image: url('/edit.png');
+    -fx-background-size: contain;
+    -fxbackground-repeat: no-repeat;
+
+}

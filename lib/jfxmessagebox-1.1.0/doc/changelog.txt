@@ -1,0 +1,35 @@
+2012.10.10 (1.1.0)
+  add supported locale.
+  current: en, de, es, fr, it, ja, ko, pt, ru, zh
+
+2012.10.10 (1.0.9)
+  add supported locale.
+  current: en, de, fr, ja, zh
+
+2012.10.10 (1.0.8)
+  ADD FEATURE: zh locale is added.
+
+2012.10.10 (1.0.7)
+  FIX BUG: Hide MessageBox constructor.
+
+2012.10.09 (1.0.6)
+  ADD FEATURE: Add keyboard mnemonic to button.
+
+2012.10.09 (1.0.5)
+  FIX BUG: Create stage without iconized button.
+
+2012.09.24 (1.0.4)
+  Change compile java target from 1.7 to 1.5. 
+  Rewrite javadoc in English.
+
+2012.09.21 (0.0.3)
+ Fis missing *.properties files. 
+
+2012.09.21 (0.0.2)
+  配色を変更。サンプルを改良。
+
+2012.09.20 (0.0.1)
+  新規プロダクトとして作成。
+  TODO: ボタンにニモーニックを付与できないのが謎。あるいは JavaFX 2 に該当 API が存在しない可能性あり。
+  TODO: デフォルトボタンは設定できるものの、カーソルをそこに飛ばす方法がわからない。
+  TODO: ダイアログの「最小化」ボタンを隠す方法がわからない。

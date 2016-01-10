@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+/*
+ * Copyright (c) 2011, 2014 Oracle and/or its affiliates.
+ * All rights reserved. Use is subject to license terms.
+ *
+ * This file is available and licensed under the following license:
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  - Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the distribution.
+ *  - Neither the name of Oracle nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+-->
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-stylesheet ../../../style.css?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <BorderPane fx:id="borderPane" minWidth="1102.9998779296875" prefHeight="562.9998779296875" prefWidth="1102.9998779296875" style="">
+    <bottom>
+      <BorderPane prefHeight="66.0" prefWidth="1403.0">
+        <center>
+          <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+        </center>
+      </BorderPane>
+    </bottom>
+    <center>
+      <BorderPane prefHeight="396.0" prefWidth="968.0">
+        <center>
+          <SplitPane dividerPositions="0.5004995004995005" focusTraversable="true" prefHeight="298.0" prefWidth="1317.0">
+            <items>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="312.0" prefWidth="483.0">
+                <children>
+                  <TextArea fx:id="actionsTextArea" pickOnBounds="true" prefHeight="342.0" prefWidth="514.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                </children>
+              </AnchorPane>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <children>
+                  <TextArea fx:id="arrearsTextArea" pickOnBounds="true" prefHeight="341.0" prefWidth="669.9999000000025" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                </children>
+              </AnchorPane>
+            </items>
+          </SplitPane>
+        </center>
+        <top>
+          <SplitPane dividerPositions="0.5004995004995005" focusTraversable="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="54.0" prefWidth="544.0" BorderPane.alignment="CENTER">
+            <items>
+              <AnchorPane id="actionLabel" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <children>
+                  <Label fx:id="actionLabel" layoutX="0.0" layoutY="-1.0" prefHeight="52.0" prefWidth="497.0" style="  -fx-alignment: CENTER;&#10;" text="Label" textAlignment="CENTER" />
+                </children>
+              </AnchorPane>
+              <AnchorPane id="arrearsLabel" minHeight="0.0" minWidth="0.0" prefHeight="52.0" prefWidth="169.0">
+                <children>
+                  <Label fx:id="arrearsLabel" layoutX="0.0" layoutY="2.0" prefHeight="52.0" prefWidth="497.0" style="  -fx-alignment: CENTER&#10;" text="Label" textAlignment="RIGHT" wrapText="true" />
+                </children>
+              </AnchorPane>
+            </items>
+          </SplitPane>
+        </top>
+      </BorderPane>
+    </center>
+    <right>
+      <VBox id="rightSideButtons" fx:id="rightSidePanel" prefHeight="200.0" prefWidth="100.0">
+        <children>
+          <Label id="unitsLabel" fx:id="sectionLabel" prefHeight="40.0" prefWidth="100.0" style="  -fx-alignment: CENTER;" text="Label" textAlignment="CENTER">
+            <VBox.margin>
+              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+            </VBox.margin>
+          </Label>
+        </children>
+      </VBox>
+    </right>
+    <top>
+      <AnchorPane minWidth="1094.0" pickOnBounds="true" prefHeight="101.0" prefWidth="1094.0" snapToPixel="true" BorderPane.alignment="TOP_CENTER">
+        <children>
+          <Label id="Unit" fx:id="unitNameLabel" minHeight="-Infinity" minWidth="-Infinity" prefHeight="19.0" prefWidth="273.0" text="Unit Name" AnchorPane.bottomAnchor="72.05" AnchorPane.leftAnchor="415.0" AnchorPane.rightAnchor="415.0" AnchorPane.topAnchor="9.95" />
+          <ComboBox id="departmentsComboBox" fx:id="unitsComboBox" layoutX="318.0" layoutY="33.0" prefHeight="26.0" prefWidth="469.0">
+            <items>
+              <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Item 1" />
+                <String fx:value="Item 2" />
+                <String fx:value="Item 3" />
+              </FXCollections>
+            </items>
+          </ComboBox>
+          <Button fx:id="printButton" layoutX="93.0" layoutY="25.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/print.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
+          <Button fx:id="addNewRecordButton" layoutX="236.0" layoutY="25.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="36.0" style="-fx-background-image: url('/add.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;&#10;&#10;" text="" />
+          <Button fx:id="deleteRecodButton" layoutX="143.0" layoutY="25.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/delete.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
+          <Button id="previousButton" fx:id="nextButton" layoutX="282.0" layoutY="32.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="29.0" style="-fx-background-image: url('/previous.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
+          <Button id="nextButton" fx:id="previousButton" layoutX="795.0" layoutY="33.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="29.0" style="-fx-background-image: url('/next.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
+          <Button id="addNewRecordButton" fx:id="editSaveButton" layoutX="193.0" layoutY="26.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="36.0" style="" text="" />
+        </children>
+        <BorderPane.margin>
+          <Insets />
+        </BorderPane.margin>
+      </AnchorPane>
+    </top>
+  </BorderPane>
+</fx:root>
