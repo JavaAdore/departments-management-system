@@ -27,7 +27,7 @@ public class DepartmentsManagementSystem extends Application {
         stage.setScene(scene);
         stage.setTitle("Custom Control");
         stage.setWidth(1280);
-        stage.setHeight(400);
+        stage.setHeight(450);
         
 
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {

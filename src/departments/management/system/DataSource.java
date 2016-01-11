@@ -37,7 +37,8 @@ public class DataSource {
                 Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
            String database = new File( new File(DataSource.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent() + File.separator + "UnitsManamementSystem.accdb").getPath();
 
-               
+//                           database = "D://UnitsManamementSystem.accdb";
+
                 String url = "jdbc:ucanaccess://" + database;
 
                 // specify url, username, pasword - make sure these are valid 

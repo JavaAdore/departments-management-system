@@ -30,16 +30,15 @@ public class Business {
         if (connection != null) {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("select * from units");
-                ResultSet rs = preparedStatement.executeQuery();
-                List<Unit> result = new ArrayList();
-                while (rs.next()) {
-                    Integer id = rs.getInt(1);
-                    String unitName = rs.getString(2);
-                    result.add(new Unit(id, unitName));
+                List<Unit> result;
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    result = new ArrayList();
+                    while (rs.next()) {
+                        Integer id = rs.getInt(1);
+                        String unitName = rs.getString(2);
+                        result.add(new Unit(id, unitName));
+                    }
                 }
-
-                rs.close();
-                connection.close();
                 return result;
 
             } catch (SQLException ex) {
@@ -70,23 +69,20 @@ public class Business {
                 }
 
                 rs.close();
-               
+
                 return result;
 
             } catch (SQLException ex) {
                 Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();;
-                 
+
                 throw new RuntimeException("Cannot load sections");
-            }finally
-            {
+            } finally {
                 try {
                     connection.close();
                 } catch (Exception e) {
                 }
             }
-            
-            
 
         } else {
             throw new CannotInitateConenctionException();
@@ -99,7 +95,7 @@ public class Business {
         Connection connection = DataSource.initiateConnection();
         if (connection != null) {
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement("select * from unit_sections where unit_id = ? and section_id =? ");
+                PreparedStatement preparedStatement = connection.prepareStatement("select s.section_name ,  us.* from unit_sections us , sections s where unit_id = ? and section_id =? and us.section_id = s.id ");
                 preparedStatement.setInt(1, unitId);
                 preparedStatement.setInt(2, sectionId);
 
@@ -109,12 +105,14 @@ public class Business {
                 unitSection.setSectionId(sectionId);
                 unitSection.setUnitId(unitId);
                 while (rs.next()) {
-                    Integer id = rs.getInt(1);
+                    String sectionName = rs.getString(1);
+                    Integer id = rs.getInt(2);
 
-                    String arrears = rs.getString(4);
-                    String actions = rs.getString(5);
+                    String arrears = rs.getString(5);
+                    String actions = rs.getString(6);
                     unitSection.setActions(actions);
                     unitSection.setArrears(arrears);
+                    unitSection.setSectionName(sectionName);
                     unitSection.setId(id);
                     break;
 
@@ -127,8 +125,7 @@ public class Business {
                 Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 throw new RuntimeException("Cannot load sections");
-            }finally
-            {
+            } finally {
                 try {
                     connection.close();
                 } catch (Exception e) {
@@ -146,24 +143,25 @@ public class Business {
         System.out.println(new Business().loadAllUnits().size());
     }
 
-    void addNewUnit(String unitName) {
+    Unit addNewUnit(String unitName) {
         Connection connection = DataSource.initiateConnection();
         if (connection != null) {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("insert into units(unit_name) values(?); ");
                 preparedStatement.setString(1, unitName);
                 preparedStatement.executeUpdate();
- 
+
                 ResultSet rs = preparedStatement.getGeneratedKeys();
                 Integer id = null;
                 while (rs.next()) {
                     id = rs.getInt(1);
                     break;
                 }
-
                 if (id != null) {
+                    Unit unit = new Unit(id, unitName);
+
                     preparedStatement = connection.prepareStatement(" select  s.id from sections s  ");
-                   rs = preparedStatement.executeQuery();
+                    rs = preparedStatement.executeQuery();
 
                     while (rs.next()) {
                         preparedStatement = connection.prepareStatement(" insert into unit_sections (unit_id , section_id) values(?,?) ");
@@ -172,16 +170,16 @@ public class Business {
                         preparedStatement.executeUpdate();
 
                     }
-    
+
                     connection.commit();
+                    return unit;
                 }
             } catch (SQLException ex) {
 
                 Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();;
                 throw new RuntimeException("Cannot add unit sections");
-            }finally
-            {
+            } finally {
                 try {
                     connection.close();
                 } catch (Exception e) {
@@ -191,33 +189,31 @@ public class Business {
             throw new CannotInitateConenctionException();
 
         }
+        return null;
 
     }
 
     void deleteUnit(Unit selectedItem) {
 
-     Connection connection = DataSource.initiateConnection();
+        Connection connection = DataSource.initiateConnection();
         if (connection != null) {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("delete from unit_sections where unit_id = ? ");
                 preparedStatement.setInt(1, selectedItem.getId());
                 preparedStatement.executeUpdate();
- 
-              
-                    preparedStatement = connection.prepareStatement(" delete from units where id = ?  ");
-                  preparedStatement.setInt(1, selectedItem.getId());
+
+                preparedStatement = connection.prepareStatement(" delete from units where id = ?  ");
+                preparedStatement.setInt(1, selectedItem.getId());
                 preparedStatement.executeUpdate();
-                    
-    
-                    connection.commit();
-                
+
+                connection.commit();
+
             } catch (SQLException ex) {
 
                 Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();;
                 throw new RuntimeException("Cannot add delete unit");
-            }finally
-            {
+            } finally {
                 try {
                     connection.close();
                 } catch (Exception e) {
@@ -227,13 +223,12 @@ public class Business {
             throw new CannotInitateConenctionException();
 
         }
-        
-        
+
     }
 
     void updateUnitSection(UnitSection selectedUnitSection) {
 
-          Connection connection = DataSource.initiateConnection();
+        Connection connection = DataSource.initiateConnection();
         if (connection != null) {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("update  unit_sections set arrears =? , actions =?  where id = ? ");
@@ -241,19 +236,15 @@ public class Business {
                 preparedStatement.setString(2, selectedUnitSection.getActions());
                 preparedStatement.setInt(3, selectedUnitSection.getId());
                 preparedStatement.executeUpdate();
- 
-              
-               
-    
-                    connection.commit();
-                
+
+                connection.commit();
+
             } catch (SQLException ex) {
 
                 Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();;
                 throw new RuntimeException("Cannot add delete unit");
-            }finally
-            {
+            } finally {
                 try {
                     connection.close();
                 } catch (Exception e) {
@@ -263,8 +254,39 @@ public class Business {
             throw new CannotInitateConenctionException();
 
         }
-        
-    
+
+    }
+
+    List<Unit> getUnit(String targetUnitName) {
+
+        Connection connection = DataSource.initiateConnection();
+        if (connection != null) {
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement("select * from units where unit_name like  ?");
+                preparedStatement.setString(1,"%"+ targetUnitName.trim()+"%");
+                List<Unit> result;
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    result = new ArrayList();
+                    while (rs.next()) {
+                        Integer id = rs.getInt(1);
+                        String unitName = rs.getString(2);
+                        result.add(new Unit(id, unitName));
+                    }
+                return result;
+                }
+               
+
+            } catch (SQLException ex) {
+                Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();;
+                throw new RuntimeException("Cannot load units");
+            }
+
+        } else {
+            throw new CannotInitateConenctionException();
+
+        }
+
     }
 
 }

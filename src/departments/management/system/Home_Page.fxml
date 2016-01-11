@@ -46,7 +46,15 @@
     <bottom>
       <BorderPane prefHeight="66.0" prefWidth="1403.0">
         <center>
-          <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+          <AnchorPane prefHeight="66.0" prefWidth="1003.0">
+            <children>
+              <Button fx:id="printButton" layoutX="763.0" layoutY="16.0" mnemonicParsing="false" pickOnBounds="true" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/print.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;" text="" />
+              <Button fx:id="addNewRecordButton" layoutX="968.0" layoutY="15.0" mnemonicParsing="false" pickOnBounds="true" prefHeight="40.0" prefWidth="36.0" style="-fx-background-image: url('/add.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;&#10;&#10;" text="" />
+              <Button fx:id="deleteRecodButton" layoutX="813.0" layoutY="16.0" mnemonicParsing="false" pickOnBounds="true" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/delete.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;" text="" />
+              <Button id="addNewRecordButton" fx:id="editSaveButton" layoutX="925.0" layoutY="16.0" mnemonicParsing="false" pickOnBounds="true" prefHeight="40.0" prefWidth="36.0" style="" text="" />
+              <Button id="deleteRecodButton" fx:id="searchButton" layoutX="869.0" layoutY="16.0" mnemonicParsing="false" pickOnBounds="true" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/search.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;" text="" />
+            </children>
+          </AnchorPane>
         </center>
       </BorderPane>
     </bottom>
@@ -57,12 +65,12 @@
             <items>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="312.0" prefWidth="483.0">
                 <children>
-                  <TextArea fx:id="actionsTextArea" pickOnBounds="true" prefHeight="342.0" prefWidth="514.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TextArea fx:id="actionsTextArea" pickOnBounds="true" prefHeight="342.0" prefWidth="514.0" style="  -fx-alignment: center-right;" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 </children>
               </AnchorPane>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                 <children>
-                  <TextArea fx:id="arrearsTextArea" pickOnBounds="true" prefHeight="341.0" prefWidth="669.9999000000025" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TextArea fx:id="arrearsTextArea" pickOnBounds="true" prefHeight="341.0" prefWidth="669.9999000000025" style="  -fx-alignment: center-right;" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 </children>
               </AnchorPane>
             </items>
@@ -110,12 +118,9 @@
               </FXCollections>
             </items>
           </ComboBox>
-          <Button fx:id="printButton" layoutX="93.0" layoutY="25.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/print.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
-          <Button fx:id="addNewRecordButton" layoutX="236.0" layoutY="25.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="36.0" style="-fx-background-image: url('/add.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;&#10;&#10;" text="" />
-          <Button fx:id="deleteRecodButton" layoutX="143.0" layoutY="25.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="43.0" style="-fx-background-image: url('/delete.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
-          <Button id="previousButton" fx:id="nextButton" layoutX="282.0" layoutY="32.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="29.0" style="-fx-background-image: url('/previous.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
-          <Button id="nextButton" fx:id="previousButton" layoutX="795.0" layoutY="33.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="29.0" style="-fx-background-image: url('/next.png');&#10;-fx-background-size: contain;&#10; -fxbackground-repeat: no-repeat;" text="" />
-          <Button id="addNewRecordButton" fx:id="editSaveButton" layoutX="193.0" layoutY="26.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="36.0" style="" text="" />
+          <Button id="previousButton" fx:id="nextButton" layoutX="282.0" layoutY="32.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="29.0" style="-fx-background-image: url('/previous.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;" text="" />
+          <Button id="nextButton" fx:id="previousButton" layoutX="795.0" layoutY="33.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="29.0" style="-fx-background-image: url('/next.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;" text="" />
+          <Button id="previousButton" fx:id="refreshButton" layoutX="244.0" layoutY="32.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="22.0" style="-fx-background-image: url('/refresh.png');&#10;-fx-background-size: contain;&#10; -fx-background-repeat: no-repeat;" text="" />
         </children>
         <BorderPane.margin>
           <Insets />

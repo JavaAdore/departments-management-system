@@ -4,6 +4,8 @@ import departments.management.system.dto.Section;
 import departments.management.system.dto.Unit;
 import departments.management.system.dto.UnitSection;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.value.ChangeListener;
@@ -20,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -39,6 +42,8 @@ import javax.imageio.ImageIO;
 public class DepartmentsManagementSystemController extends VBox {
 
     private final static String SECTION_ID = "SECTION_ID";
+    private final static String BUTTON_UNIT_SECTION = "BUTTON_UNIT_SECTION";
+
     @FXML
     private Button printButton;
 
@@ -63,11 +68,16 @@ public class DepartmentsManagementSystemController extends VBox {
     TextArea actionsTextArea;
 
     @FXML
+    private Button refreshButton;
+
+    @FXML
     private Button addNewRecordButton;
     @FXML
     private Button deleteRecodButton;
 
-    private Integer currentlySelectedSectionId;
+    private Button currentlySelectedSection;
+
+    private Unit currentlySelectedUnit;
 
     @FXML
     private Button previousButton;
@@ -75,13 +85,19 @@ public class DepartmentsManagementSystemController extends VBox {
     private Button nextButton;
     @FXML
     private Button editSaveButton;
-    
+
+    @FXML
+    private Button searchButton;
+
     @FXML
     private BorderPane borderPane;
 
     private boolean editMode;
 
-    UnitSection selectedUnitSection;
+    ButtonType yes = new ButtonType("نعم");
+    ButtonType no = new ButtonType("لا");
+    ButtonType cancel = new ButtonType("الغاء الامر", ButtonData.CANCEL_CLOSE);
+
     public DepartmentsManagementSystemController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Home_Page.fxml"));
         fxmlLoader.setRoot(this);
@@ -94,6 +110,7 @@ public class DepartmentsManagementSystemController extends VBox {
             loadSections();
             refreshNextAndBackButtons();
             refreshEditSaveButton();
+            setInputAreasReadOnly();
 
         } catch (IOException exception) {
             throw new RuntimeException(exception);
@@ -121,46 +138,67 @@ public class DepartmentsManagementSystemController extends VBox {
     private void loadUnits() {
 
         List<Unit> units = new Business().loadAllUnits();
+        setComboBoxUnits(units);
+
+    }
+
+    private void setComboBoxUnits(List<Unit> units) {
         final ObservableList<Unit> data = FXCollections.observableArrayList(units);
         unitsComboBox.setItems(data);
         if (units.size() > 0) {
             unitsComboBox.getSelectionModel().select(0);
+            currentlySelectedUnit = units.get(0);
 
+        } else {
+            currentlySelectedUnit = null;
         }
+    }
 
-        unitsComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Unit>() {
+    private void setCurrentlySelectedUnit(Unit currentlySelectedUnit) {
 
-            @Override
-            public void changed(ObservableValue<? extends Unit> observable, Unit oldValue, Unit newValue) {
+        this.currentlySelectedUnit = currentlySelectedUnit;
+    }
 
-                if (currentlySelectedSectionId != null) {
-                    loadUnitSection(newValue.getId(), currentlySelectedSectionId);
+    private void attachNewUnitSectionsToButtons() {
+        if (currentlySelectedUnit != null) {
+            Business business = new Business();
+            for (Node node : rightSidePanel.getChildren()) {
+                if (node instanceof Button) {
+                    Section section = (Section) ((Button) node).getProperties().get(SECTION_ID);
+
+                    UnitSection unitSection = business.getUnitSection(currentlySelectedUnit.getId(), section.getId());
+
+                    ((Button) node).getProperties().put(BUTTON_UNIT_SECTION, unitSection);
                 }
-                refreshNextAndBackButtons();
-                refreshEditSaveButton();
-
             }
-        });
+        }
 
     }
 
-    private void loadUnitSection(Integer unitId, Integer sectionId) {
-        selectedUnitSection = new Business().getUnitSection(unitId, sectionId);
+    private UnitSection loadUnitSection(Integer unitId, Integer sectionId) {
+        return new Business().getUnitSection(unitId, sectionId);
 
-        arrearsTextArea.setText(selectedUnitSection.getArrears() != null ? selectedUnitSection.getArrears() : "");
-
-        actionsTextArea.setText(selectedUnitSection.getActions() != null ? selectedUnitSection.getActions() : "");
-
+        //arrearsTextArea.setText(selectedUnitSection.getArrears() != null ? selectedUnitSection.getArrears() : "");
+        // actionsTextArea.setText(selectedUnitSection.getActions() != null ? selectedUnitSection.getActions() : "");
     }
 
     private void loadSections() {
 
-        List<Section> sections = new Business().loadAllSections();
+        Business business = new Business();
+        List<Section> sections = business.loadAllSections();
 
+        Unit unit = unitsComboBox.getSelectionModel().getSelectedItem();
         for (Section section : sections) {
             Button button = new Button();
             button.setText(section.getSectionName());
-            button.getProperties().put(SECTION_ID, section.getId());
+            if (unit != null) {
+                UnitSection unitSection = business.getUnitSection(unit.getId(), section.getId());
+
+                button.getProperties().put(BUTTON_UNIT_SECTION, unitSection);
+            }
+            button.getProperties().put(SECTION_ID, section);
+
+            button.setDisable(unit == null);
             button.getStyleClass().add("rightSideMenuButton");
             button.setPrefSize(100, 50);
             button.setPadding(new Insets(5));
@@ -175,13 +213,13 @@ public class DepartmentsManagementSystemController extends VBox {
                     }
                     ((Button) event.getSource()).getStyleClass().add("selected");
 
-                    currentlySelectedSectionId = (Integer) ((Button) event.getSource()).getProperties().get(SECTION_ID);
-
-                    Unit selectedUnit = unitsComboBox.getSelectionModel().getSelectedItem();
-                    if (selectedUnit != null) {
-                        loadUnitSection(selectedUnit.getId(), currentlySelectedSectionId);
-
+                    if (currentlySelectedSection != null) {
+                        backupCurrentlySelectedButtonData();
                     }
+
+                    currentlySelectedSection = ((Button) event.getSource());
+                    displayCurrentlySelectedButtonData();
+
                     refreshEditSaveButton();
 
                 }
@@ -192,20 +230,56 @@ public class DepartmentsManagementSystemController extends VBox {
 
     }
 
+    private void backupCurrentlySelectedButtonData() {
+
+        UnitSection unitsection = (UnitSection) currentlySelectedSection.getProperties().get(BUTTON_UNIT_SECTION);
+        unitsection.setArrears(arrearsTextArea.getText());
+        unitsection.setActions(actionsTextArea.getText());
+
+        currentlySelectedSection.getProperties().put(BUTTON_UNIT_SECTION, unitsection);
+
+    }
+
+    private void displayCurrentlySelectedButtonData() {
+        if (currentlySelectedSection != null) {
+            UnitSection unitsection = (UnitSection) currentlySelectedSection.getProperties().get(BUTTON_UNIT_SECTION);
+            arrearsTextArea.setText(unitsection.getArrears() != null ? unitsection.getArrears() : "");
+            actionsTextArea.setText(unitsection.getActions() != null ? unitsection.getActions() : "");
+        }
+    }
+
     private void assignListeners() {
 
         addNewRecordButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
-                String unitName = displayEnterUnitNameDialog();
-                if (unitName != null) {
-                    Business business = new Business();
-                    business.addNewUnit(unitName);
-                    refreshUI();
-                    unitsComboBox.getSelectionModel().selectLast();
+                if (editMode) {
+
+                    Optional<ButtonType> result = displayChangeWhileEditModeDialog();
+                    if (result.get() == yes) {
+                        saveAllChanges();
+                        reverseMode();
+
+                    } else if (result.get() == no) {
+                        reverseMode();
+
+                    } else if (result.get() == cancel) {
+                        return;
+
+                    }
+
                 }
 
+                String unitName = displayInputDialog("اضافة وحدة جديدة", "اضافة وحدة جديدة", "فضلا ادخل اسم الوحدة");
+                if (unitName != null) {
+                    Business business = new Business();
+                    currentlySelectedUnit = business.addNewUnit(unitName);
+                    attachNewUnitSectionsToButtons();
+                    refreshUI();
+                    unitsComboBox.getSelectionModel().selectLast();
+
+                }
             }
         });
 
@@ -217,6 +291,8 @@ public class DepartmentsManagementSystemController extends VBox {
                 boolean deleteUnit = displayDeleteUnitDialog();
                 if (deleteUnit) {
                     deleteCurrentlySelectedUnit();
+                    clearTextAreas();
+
                     refreshUI();
                 }
 
@@ -251,17 +327,10 @@ public class DepartmentsManagementSystemController extends VBox {
                 reverseMode();
                 if (isEditMode() == true) {
 
-                    editSaveButton.getStyleClass().remove("edit");
-                    editSaveButton.getStyleClass().add("save");
                     setInputAreasEditable();
 
                 } else {
-                    saveChangesInUnitSection();
-
-                    editSaveButton.getStyleClass().add("edit");
-                    editSaveButton.getStyleClass().remove("save");
-
-                    setInputAreasReadOnly();
+                    saveAllChanges();
 
                 }
 
@@ -270,46 +339,116 @@ public class DepartmentsManagementSystemController extends VBox {
         });
 
         editSaveButton.getStyleClass().add("edit");
-        
+
         printButton.setOnAction(new EventHandler<ActionEvent>() {
 
-          
+            public void handle(ActionEvent t) {
 
-        public void handle(ActionEvent t) {
-            try {
-                // getting screen coordinates
-                Bounds b = borderPane.getBoundsInParent();
-                int x = (int)Math.round( b.getMinX());
-                int y = (int)Math.round(b.getMaxX());
-                int w = (int)Math.round(b.getWidth());
-                int h = (int)Math.round(b.getHeight());
-                // using ATW robot to get image
-                java.awt.Robot robot = new java.awt.Robot();
-                java.awt.image.BufferedImage bi = robot.createScreenCapture(new java.awt.Rectangle(x, y, w, h));
-                // convert BufferedImage to javafx.scene.image.Image
-                java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
-                ImageIO.write(bi, "png", stream);
-                Image image = new Image(new java.io.ByteArrayInputStream(stream.toByteArray()), w, h, true, true);
-                // put it to clipboard
-                ClipboardContent cc = new ClipboardContent();
-                cc.putImage(image);
-                Clipboard.getSystemClipboard().setContent(cc);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+                List<UnitSection> unitSections = new LinkedList<>();
+                for (Node node : rightSidePanel.getChildren()) {
+                    if (node instanceof Button) {
+                        UnitSection unitSection = (UnitSection) ((Button) node).getProperties().get(BUTTON_UNIT_SECTION);
+                        if (unitSection != null) {
+                            unitSections.add(unitSection);
+                        }
+                    }
+                }
+                
+                
+                Utils.print(currentlySelectedUnit , unitSections);
 
-            
             }
         });
-        
+
+        unitsComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Unit>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Unit> observable, Unit oldValue, Unit newValue) {
+
+                if (editMode) {
+
+                    Optional<ButtonType> result = displayChangeWhileEditModeDialog();
+                    if (result.get() == yes) {
+                        saveAllChanges();
+                        reverseMode();
+
+                    } else if (result.get() == no) {
+                        reverseMode();
+
+                    } else if (result.get() == cancel) {
+                        unitsComboBox.getSelectionModel().select(oldValue);
+                        return;
+
+                    }
+                }
+
+                setCurrentlySelectedUnit(newValue);
+                attachNewUnitSectionsToButtons();
+                displayCurrentlySelectedButtonData();
+
+                refreshNextAndBackButtons();
+                refreshEditSaveButton();
+
+            }
+
+        });
+
+        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                loadUnits();
+            }
+        });
+
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                String unitName = displayInputDialog("بحث", "بحث", "من فضلك ادخل اسم الوحدة المراد البحث عنها");
+                if (unitName != null) {
+                    List<Unit> units = new Business().getUnit(unitName);
+                    clearTextAreas();
+                    setComboBoxUnits(units);
+                    refreshControls();
+                }
+            }
+        });
+
+    }
+
+    private Optional<ButtonType> displayChangeWhileEditModeDialog() {
+
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("تأكيد");
+        alert.setHeaderText("تأكيد");
+        alert.setContentText("انت الان علي وضع التعديل و لم تقم بحفظ التعديلات.\n هل ترغب في حفظ التعديلات");
+
+        alert.getButtonTypes().setAll(yes, no, cancel);
+        return alert.showAndWait();
+    }
+
+    private void saveAllChanges() {
+        saveChangesInUnitSection();
+
+        setInputAreasReadOnly();
 
     }
 
     private void saveChangesInUnitSection() {
-        selectedUnitSection.setActions(actionsTextArea.getText());
-        selectedUnitSection.setArrears(arrearsTextArea.getText());
 
-        new Business().updateUnitSection(selectedUnitSection);
+        backupCurrentlySelectedButtonData();
+
+        Business business = new Business();
+        for (Node node : rightSidePanel.getChildren()) {
+            if (node instanceof Button) {
+                UnitSection unitSection = (UnitSection) ((Button) node).getProperties().get(BUTTON_UNIT_SECTION);
+                if (unitSection != null) {
+                    business.updateUnitSection(unitSection);
+                }
+            }
+
+        }
 
     }
 
@@ -319,11 +458,22 @@ public class DepartmentsManagementSystemController extends VBox {
     }
 
     private void reverseMode() {
+
         editMode = !editMode;
+
+        if (editMode) {
+            editSaveButton.getStyleClass().remove("edit");
+            editSaveButton.getStyleClass().add("save");
+
+        } else {
+            editSaveButton.getStyleClass().add("edit");
+            editSaveButton.getStyleClass().remove("save");
+        }
     }
 
     private void deleteCurrentlySelectedUnit() {
         new Business().deleteUnit(unitsComboBox.getSelectionModel().getSelectedItem());
+        currentlySelectedUnit = unitsComboBox.getSelectionModel().getSelectedItem();
 
     }
 
@@ -342,11 +492,7 @@ public class DepartmentsManagementSystemController extends VBox {
     private void refreshUI() {
         loadUnits();
 
-        deleteRecodButton.setDisable(unitsComboBox.getSelectionModel().isEmpty());
-        printButton.setDisable(unitsComboBox.getSelectionModel().isEmpty());
-
-        refreshNextAndBackButtons();
-        refreshEditSaveButton();
+        refreshControls();
 
     }
 
@@ -366,7 +512,7 @@ public class DepartmentsManagementSystemController extends VBox {
 
     }
 
-    private String displayEnterUnitNameDialog() {
+    private String displayInputDialog(String title, String headerText, String content) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("اضافة وحدة جديدة");
         dialog.setHeaderText("اضافة وحدة جديدة");
@@ -378,7 +524,7 @@ public class DepartmentsManagementSystemController extends VBox {
             String unitName = result.get();
 
             if (unitName == null && unitName.trim().length() == 0) {
-                return displayEnterUnitNameDialog();
+                return displayInputDialog(title, headerText, content);
             } else {
 
                 return unitName;
@@ -401,7 +547,31 @@ public class DepartmentsManagementSystemController extends VBox {
     }
 
     private void refreshEditSaveButton() {
-        editSaveButton.setDisable(unitsComboBox.getSelectionModel().isEmpty() || selectedUnitSection == null);
+        editSaveButton.setDisable(unitsComboBox.getSelectionModel().isEmpty() || currentlySelectedSection == null);
+        printButton.setDisable(unitsComboBox.getSelectionModel().isEmpty() || currentlySelectedSection == null);
+    }
+
+    private void refreshRightSideMenuButtons() {
+        for (Node node : rightSidePanel.getChildren()) {
+            if (node instanceof Button) {
+                ((Button) node).setDisable(currentlySelectedUnit == null);
+            }
+        }
+
+    }
+
+    private void refreshControls() {
+        deleteRecodButton.setDisable(unitsComboBox.getSelectionModel().isEmpty());
+        printButton.setDisable(unitsComboBox.getSelectionModel().isEmpty());
+
+        refreshNextAndBackButtons();
+        refreshEditSaveButton();
+        refreshRightSideMenuButtons();
+    }
+
+    private void clearTextAreas() {
+        actionsTextArea.setText("");
+        arrearsTextArea.setText("");
     }
 
 }
