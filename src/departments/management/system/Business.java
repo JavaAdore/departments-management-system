@@ -212,7 +212,7 @@ public class Business {
 
                 Logger.getLogger(Business.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();;
-                throw new RuntimeException("Cannot add delete unit");
+                throw new RuntimeException("Cannot xxx  unit");
             } finally {
                 try {
                     connection.close();
